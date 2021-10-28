@@ -31,7 +31,7 @@ public class SwaggerConfig {
         selectorBuilder.paths(PathSelectors.any());
         selectorBuilder.apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class));
         docket = selectorBuilder.build();
-        
+
         ApiKey apiKey = new ApiKey("token", "token", "header");
         List<SecurityScheme> apiKeyList = new ArrayList<>();
         apiKeyList.add(apiKey);
