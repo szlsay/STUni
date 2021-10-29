@@ -6,7 +6,7 @@
 		<button class="login-btn" open-type="getUserInfo" @tap="login">登录系统</button>
 		<view class="register-container">
 			没有账号？
-			<text class="register">立即注册</text>
+			<text class="register" @tap="toRegister">立即注册</text>
 		</view>
 	</view>
 </template>
@@ -19,6 +19,11 @@
 			}
 		},
 		methods: {
+			toRegister: function(){
+				uni.navigateTo({
+					url: "../register/register"
+				})
+			},
 			login: function(){
 				let that = this;
 				uni.login({
