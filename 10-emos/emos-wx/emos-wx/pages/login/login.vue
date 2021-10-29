@@ -29,6 +29,8 @@
 				uni.login({
 					provider:"weixin",
 					success:function(resp){
+						console.log(resp)
+					
 						// uni.showModal({
 						// 	content: resp.code,
 						// 	showCancel: false
