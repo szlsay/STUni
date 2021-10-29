@@ -33,16 +33,6 @@
 								}
 							})
 							
-							// uni.showModal({
-							// 	content: resp.code,
-							// 	showCancel: false
-							// });
-							// that.ajax(that.url.login, "POST", {"code": resp.code}, function(resp){
-							// 	let permission = resp.data.permission
-							// 	uni.showToast({
-							// 		title: permission
-							// 	});
-							// })
 						},
 						fail:function(e){
 							uni.showToast({
