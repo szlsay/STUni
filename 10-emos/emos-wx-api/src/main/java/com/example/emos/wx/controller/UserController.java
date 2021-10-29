@@ -58,23 +58,16 @@ public class UserController {
         return R.ok("用户注册成功").put("token",token).put("permission",permsSet);
     }
 
-//    @PostMapping("/login")
-//    @ApiOperation("登陆系统")
-//    public R login(@Valid @RequestBody LoginForm form){
-//        int id=userService.login(form.getCode());
-//        String token=jwtUtil.createToken(id);
-//        saveCacheToken(token,id);
-//        Set<String> permsSet = userService.searchUserPermissions(id);
-//        return R.ok("登陆成功").put("token",token).put("permission",permsSet);
-//    }
-//
-//    @GetMapping("/searchUserSummary")
-//    @ApiOperation("查询用户摘要信息")
-//    public R searchUserSummary(@RequestHeader("token") String token){
-//        int userId=jwtUtil.getUserId(token);
-//        HashMap map=userService.searchUserSummary(userId);
-//        return R.ok().put("result",map);
-//    }
+    @PostMapping("/login")
+    @ApiOperation("登陆系统")
+    public R login(@Valid @RequestBody LoginForm form){
+        int id=userService.login(form.getCode());
+        String token=jwtUtil.createToken(id);
+        saveCacheToken(token,id);
+        Set<String> permsSet = userService.searchUserPermissions(id);
+        return R.ok("登陆成功").put("token",token).put("permission",permsSet);
+    }
+
 //
 //    @PostMapping("/searchUserGroupByDept")
 //    @ApiOperation("查询员工列表，按照部门分组排列")
