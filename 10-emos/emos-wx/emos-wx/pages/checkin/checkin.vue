@@ -18,14 +18,40 @@
 		data() {
 			return {
 				btnText: "拍照",
-				canCheckin: false,
+				canCheckin: true,
 				photoPath: "",
 				showImage: false,
 				showCamera: true
 			}
 		},
 		methods: {
-
+			clickBtn() {
+				let that = this;
+				if (that.btnText == "拍照") {
+					let ctx = uni.createCameraContext();
+					ctx.takePhoto({
+						quality: "high",
+						success: function(resp) {
+							console.log(resp.tempImagePath)
+							that.photoPath = resp.tempImagePath
+							that.showCamera = false
+							that.showImage = true
+							that.btnText = "签到"
+						}
+					})
+				} else {
+					//TODO 签到
+					uni.showToast({
+						title:"未开发"
+					})
+				}
+			},
+			afresh(){
+				let that = this;
+				that.showCamera = true;
+				that.showImage = false;
+				that.btnText = "拍照";
+			}
 		}
 	}
 </script>
