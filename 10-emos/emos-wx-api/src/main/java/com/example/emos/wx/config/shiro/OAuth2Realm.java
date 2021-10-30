@@ -2,6 +2,8 @@ package com.example.emos.wx.config.shiro;
 
 //import com.example.emos.wx.db.pojo.TbUser;
 //import com.example.emos.wx.service.UserService;
+import com.example.emos.wx.db.pojo.TbUser;
+import com.example.emos.wx.service.UserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -17,8 +19,8 @@ public class OAuth2Realm extends AuthorizingRealm {
     @Autowired
     private JwtUtil jwtUtil;
 
-//    @Autowired
-//    private UserService userService;
+    @Autowired
+    private UserService userService;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -30,13 +32,11 @@ public class OAuth2Realm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection collection) {
-//        TbUser user= (TbUser) collection.getPrimaryPrincipal();
-//        int userId=user.getId();
-//        Set<String> permsSet=userService.searchUserPermissions(userId);
-//        SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
-//        info.setStringPermissions(permsSet);
-//        return info;
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        TbUser user= (TbUser) collection.getPrimaryPrincipal();
+        int userId=user.getId();
+        Set<String> permsSet=userService.searchUserPermissions(userId);
+        SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
+        info.setStringPermissions(permsSet);
         return info;
     }
 
@@ -45,16 +45,14 @@ public class OAuth2Realm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-//        String accessToken=(String)token.getPrincipal();
-//        int userId=jwtUtil.getUserId(accessToken);
-//        TbUser user=userService.searchById(userId);
-//
-//        if(user==null){
-//            throw new LockedAccountException("账号已被锁定,请联系管理员");
-//        }
-//        SimpleAuthenticationInfo info=new SimpleAuthenticationInfo(user,accessToken,getName());
-//        return info;
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo();
+        String accessToken=(String)token.getPrincipal();
+        int userId=jwtUtil.getUserId(accessToken);
+        TbUser user=userService.searchById(userId);
+
+        if(user==null){
+            throw new LockedAccountException("账号已被锁定,请联系管理员");
+        }
+        SimpleAuthenticationInfo info=new SimpleAuthenticationInfo(user,accessToken,getName());
         return info;
     }
 }

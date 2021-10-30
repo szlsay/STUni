@@ -7,7 +7,7 @@ import cn.hutool.json.JSONUtil;
 import com.example.emos.wx.db.dao.TbDeptDao;
 import com.example.emos.wx.db.dao.TbUserDao;
 //import com.example.emos.wx.db.pojo.MessageEntity;
-//import com.example.emos.wx.db.pojo.TbUser;
+import com.example.emos.wx.db.pojo.TbUser;
 import com.example.emos.wx.exception.EmosException;
 import com.example.emos.wx.service.UserService;
 //import com.example.emos.wx.task.MessageTask;
@@ -106,13 +106,14 @@ public class UserServiceImpl implements UserService {
 
         return id;
     }
-//
-//    @Override
-//    public TbUser searchById(int userId) {
-//        TbUser user=userDao.searchById(userId);
-//
-//        return user;
-//    }
+
+    @Override
+    public TbUser searchById(int userId) {
+        TbUser user=userDao.searchById(userId);
+
+        return user;
+    }
+
 //
 //    @Override
 //    public String searchUserHiredate(int userId) {

@@ -63,6 +63,7 @@ public class UserController {
     public R login(@Valid @RequestBody LoginForm form){
         int id=userService.login(form.getCode());
         String token=jwtUtil.createToken(id);
+        System.out.println("token:" + token);
         saveCacheToken(token,id);
         Set<String> permsSet = userService.searchUserPermissions(id);
         return R.ok("登陆成功").put("token",token).put("permission",permsSet);
