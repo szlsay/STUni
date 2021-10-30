@@ -25,6 +25,7 @@
 				})
 			},
 			login: function() {
+				console.log("login");
 				let that = this
 				uni.login({
 					provider: "weixin",
@@ -39,7 +40,7 @@
 							uni.setStorageSync("permission", permission)
 							//跳转到登陆页面
 							uni.switchTab({
-								url: "/pages/index/index"
+								url: "../index/index"
 							})
 						})
 					},
