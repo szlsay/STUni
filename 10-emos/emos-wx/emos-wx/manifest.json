@@ -54,7 +54,12 @@
         "setting" : {
             "urlCheck" : false
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "permission" : {
+            "scope.userLocation" : {
+                "desc" : "在线签到"
+            }
+        }
     },
     "mp-alipay" : {
         "usingComponents" : true
@@ -68,5 +73,10 @@
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "2"
+    "vueVersion" : "2",
+    "h5" : {
+        "sdkConfigs" : {
+            "maps" : {}
+        }
+    }
 }

@@ -14,6 +14,9 @@
 </template>
 
 <script>
+	var QQMapWX = require('../../lib/qqmap-wx-jssdk.min.js');
+	var qqmapsdk;
+
 	export default {
 		data() {
 			return {
@@ -23,6 +26,11 @@
 				showImage: false,
 				showCamera: true
 			}
+		},
+		onLoad() {
+			qqmapsdk = new QQMapWX({
+				key: "VRMBZ-7M26F-ZYHJE-NWGZ2-RODRJ-DRBJN"
+			})
 		},
 		methods: {
 			clickBtn() {
@@ -40,13 +48,127 @@
 						}
 					})
 				} else {
-					//TODO 签到
-					uni.showToast({
-						title:"未开发"
+					uni.showLoading({
+						title: "签到中请稍后"
+					})
+					setTimeout(function() {
+						uni.hideLoading()
+					}, 30000)
+
+					uni.getLocation({
+						type: "wgs84",
+						success: function(resp) {
+							let latitude = resp.latitude
+							let longitude = resp.longitude
+							console.log(latitude)
+							console.log(longitude)
+							qqmapsdk.reverseGeocoder({
+								location: {
+									latitude: latitude,
+									longitude: longitude
+								},
+								success: function(resp) {
+									console.log(resp.result)
+									let address = resp.result.address
+									let addressComponent = resp.result.address_component
+									let nation = addressComponent.nation;
+									let province = addressComponent.province;
+									let city = addressComponent.city;
+									let district = addressComponent.district;
+									return
+									uni.uploadFile({
+										url: that.url.checkin,
+										filePath: that.photoPath,
+										name: "photo",
+										header: {
+											token: uni.getStorageSync("token")
+										},
+										formData: {
+											address: address,
+											country: nation,
+											province: province,
+											city: city,
+											district: district
+										},
+										success: function(resp) {
+											if (resp.statusCode == 500 && resp.data ==
+												"不存在人脸模型") {
+												uni.hideLoading()
+												uni.showModal({
+													title: "提示信息",
+													content: "EMOS系统中不存在你的人脸识别模型，是否用当前这张照片作为人脸识别模型？",
+													success: function(res) {
+														if (res.confirm) {
+															uni.uploadFile({
+																url: that
+																	.url
+																	.createFaceModel,
+																filePath: that
+																	.photoPath,
+																name: "photo",
+																header: {
+																	token: uni
+																		.getStorageSync(
+																			"token"
+																		)
+																},
+																success: function(
+																	resp
+																) {
+																	if (resp
+																		.statusCode ==
+																		500
+																	) {
+																		uni.showToast({
+																			title: resp
+																				.data,
+																			icon: "none"
+																		})
+																	} else if (
+																		resp
+																		.statusCode ==
+																		200
+																	) {
+																		uni.showToast({
+																			title: "人脸建模成功",
+																			icon: "none"
+																		})
+																	}
+																}
+															})
+														}
+													}
+												})
+											} else if (resp.statusCode == 200) {
+												let data = JSON.parse(resp.data)
+												let code = data.code
+												let msg = data.msg
+												if (code == 200) {
+													uni.hideLoading()
+													uni.showToast({
+														title: "签到成功",
+														complete: function() {
+															uni.navigateTo({
+																url: "../checkin_result/checkin_result"
+															})
+														}
+													})
+												}
+											} else if (resp.statusCode == 500) {
+												uni.showToast({
+													title: resp.data,
+													icon: "none"
+												})
+											}
+										}
+									})
+								}
+							})
+						}
 					})
 				}
 			},
-			afresh(){
+			afresh() {
 				let that = this;
 				that.showCamera = true;
 				that.showImage = false;
