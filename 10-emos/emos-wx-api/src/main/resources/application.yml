@@ -76,7 +76,7 @@ emos:
     system: szl885@qq.com
     hr: 409178030@qq.com
   image-folder: /Users/ylmac/Pictures/emos/image
-#  code: HelloWorld
+  code: 5D77908231EB8AF2
 #  recieveNotify: http://PC电脑的IP地址:8080/emos-wx-api/meeting/recieveNotify
 #workflow:
 #  url: http://CentOS的IP地址:9090/emos-workflow

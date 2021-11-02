@@ -10,6 +10,7 @@ import cn.hutool.http.HttpUtil;
 import com.example.emos.wx.config.SystemConstants;
 import com.example.emos.wx.db.dao.*;
 import com.example.emos.wx.db.pojo.TbCheckin;
+import com.example.emos.wx.db.pojo.TbFaceModel;
 import com.example.emos.wx.exception.EmosException;
 import com.example.emos.wx.service.CheckinService;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,12 @@ public  class CheckinServiceImpl implements CheckinService {
 
     @Value("${emos.face.checkinUrl}")
     private String checkinUrl;
+
+    @Value("${emos.email.hr}")
+    private String hrEmail;
+
+    @Value("${emos.code}")
+    private String code;
 
     @Override
     public String validCanCheckIn(int userId, String date) {
@@ -119,7 +126,7 @@ public  class CheckinServiceImpl implements CheckinService {
             String path=(String)param.get("path");
             HttpRequest request= HttpUtil.createPost(checkinUrl);
             request.form("photo", FileUtil.file(path),"targetModel",faceModel);
-//            request.form("code",code);
+            request.form("code",code);
             HttpResponse response=request.execute();
             if(response.getStatus()!=200){
                 log.error("人脸识别服务异常");
@@ -190,5 +197,21 @@ public  class CheckinServiceImpl implements CheckinService {
         }
     }
 
-
+    @Override
+    public void createFaceModel(int userId,String path){
+        HttpRequest request=HttpUtil.createPost(createFaceModelUrl);
+        request.form("photo",FileUtil.file(path));
+        request.form("code",code);
+        HttpResponse response=request.execute();
+        String body=response.body();
+        if("无法识别出人脸".equals(body)||"照片中存在多张人脸".equals(body)){
+            throw new EmosException(body);
+        }
+        else{
+            TbFaceModel entity=new TbFaceModel();
+            entity.setUserId(userId);
+            entity.setFaceModel(body);
+            faceModelDao.insert(entity);
+        }
+    }
 }
