@@ -69,9 +69,9 @@ emos:
     secret: 123456
     expire: 5
     cache-expire: 10
-#  face:
-#    createFaceModelUrl: http://CentOS的IP地址:3000/create_face_model
-#    checkinUrl: http://CentOS的IP地址:3000/checkin
+  face:
+    createFaceModelUrl: http://192.168.7.32:3000/create_face_model
+    checkinUrl: http://192.168.7.32:3000/checkin
 #  email:
 #    system: 邮箱地址1
 #    hr: 邮箱地址2
