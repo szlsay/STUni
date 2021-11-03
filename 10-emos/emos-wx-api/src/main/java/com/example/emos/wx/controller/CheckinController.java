@@ -45,10 +45,12 @@ public class CheckinController {
     @PostMapping("/checkin")
     @ApiOperation("签到")
     public R checkin(@Valid CheckinForm form, @RequestParam("photo") MultipartFile file, @RequestHeader("token") String token){
+        System.out.println("签到-----");
         if(file==null){
             return R.error("没有上传文件");
         }
         int userId=jwtUtil.getUserId(token);
+        System.out.println("签到：userid-" + userId);
         String fileName=file.getOriginalFilename().toLowerCase();
         if(!fileName.endsWith(".jpg")){
             return R.error("必须提交JPG格式图片");
@@ -65,6 +67,7 @@ public class CheckinController {
                 param.put("address",form.getAddress());
                 param.put("country",form.getCountry());
                 param.put("province",form.getProvince());
+                System.out.println("签到：param-" + param);
                 checkinService.checkin(param);
                 return R.ok("签到成功");
             }catch (IOException e){

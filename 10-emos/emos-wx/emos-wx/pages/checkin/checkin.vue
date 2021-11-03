@@ -32,6 +32,21 @@
 				key: "VRMBZ-7M26F-ZYHJE-NWGZ2-RODRJ-DRBJN"
 			})
 		},
+		onShow: function() {
+			let that = this
+			that.ajax(that.url.validCanCheckIn, "GET", null, function(resp) {
+				let msg = resp.data.msg
+				if (msg != "可以考勤") {
+					that.canCheckin = false
+					setTimeout(function() {
+						uni.showToast({
+							title: msg,
+							icon: "none"
+						})
+					}, 1000)
+				}
+			})
+		},
 		methods: {
 			clickBtn() {
 				let that = this;
@@ -75,10 +90,9 @@
 									let province = addressComponent.province;
 									let city = addressComponent.city;
 									let district = addressComponent.district;
-									return
 									uni.uploadFile({
 										url: that.url.checkin,
-										filePath: that.photoPath,
+										filePath: "",
 										name: "photo",
 										header: {
 											token: uni.getStorageSync("token")
@@ -91,6 +105,7 @@
 											district: district
 										},
 										success: function(resp) {
+											console.log("签到结果：" + resp.data)
 											if (resp.statusCode == 500 && resp.data ==
 												"不存在人脸模型") {
 												uni.hideLoading()

@@ -9,11 +9,14 @@ const app = new Vue({
 })
 app.$mount()
 
-let baseUrl = "http://192.168.7.245:8080/emos-wx-api"
+let baseUrl = "192.168.121.177:8080/emos-wx-api"
 
 Vue.prototype.url={
 	register: baseUrl + "/user/register",
-	login: baseUrl + "/user/login"
+	login: baseUrl + "/user/login",
+	checkin: baseUrl + "/checkin/checkin",
+	createFaceModel: baseUrl + "/checkin/createFaceModel",
+	validCanCheckIn: baseUrl + "/checkin/validCanCheckIn"
 }
 
 Vue.prototype.ajax = function(url, method, data, fun) {

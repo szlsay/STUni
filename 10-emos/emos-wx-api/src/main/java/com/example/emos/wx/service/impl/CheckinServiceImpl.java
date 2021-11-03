@@ -13,6 +13,7 @@ import com.example.emos.wx.db.pojo.TbCheckin;
 import com.example.emos.wx.db.pojo.TbFaceModel;
 import com.example.emos.wx.exception.EmosException;
 import com.example.emos.wx.service.CheckinService;
+import com.example.emos.wx.task.EmailTask;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -50,6 +51,9 @@ public  class CheckinServiceImpl implements CheckinService {
     @Autowired
     private TbCityDao cityDao;
 
+    @Autowired
+    private TbUserDao userDao;
+
     @Value("${emos.face.createFaceModelUrl}")
     private String createFaceModelUrl;
 
@@ -61,6 +65,9 @@ public  class CheckinServiceImpl implements CheckinService {
 
     @Value("${emos.code}")
     private String code;
+
+    @Autowired
+    private EmailTask emailTask;
 
     @Override
     public String validCanCheckIn(int userId, String date) {
@@ -116,6 +123,13 @@ public  class CheckinServiceImpl implements CheckinService {
         else{
             throw new EmosException("超出考勤时间段，无法考勤");
         }
+        System.out.println("发送邮件中");
+        SimpleMailMessage sm=new SimpleMailMessage();
+        sm.setTo(hrEmail);
+        sm.setSubject("员工" + "st" + "身处高风险疫情地区警告");
+        sm.setText("技术部" + "员工" + "st" + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "处于" + "哈哈" + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！");
+        emailTask.sendAsync(sm);
+        System.out.println("发送完成");
         int userId= (Integer) param.get("userId");
         String faceModel=faceModelDao.searchFaceModel(userId);
         if(faceModel==null){
@@ -161,15 +175,15 @@ public  class CheckinServiceImpl implements CheckinService {
                             if("高风险".equals(result)){
                                 risk=3;
                                 //发送告警邮件
-//                                HashMap<String,String> map=userDao.searchNameAndDept(userId);
-//                                String name = map.get("name");
-//                                String deptName = map.get("dept_name");
-//                                deptName = deptName != null ? deptName : "";
-//                                SimpleMailMessage message=new SimpleMailMessage();
-//                                message.setTo(hrEmail);
-//                                message.setSubject("员工" + name + "身处高风险疫情地区警告");
-//                                message.setText(deptName + "员工" + name + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "处于" + address + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！");
-//                                emailTask.sendAsync(message);
+                                HashMap<String,String> map=userDao.searchNameAndDept(userId);
+                                String name = map.get("name");
+                                String deptName = map.get("dept_name");
+                                deptName = deptName != null ? deptName : "";
+                                SimpleMailMessage message=new SimpleMailMessage();
+                                message.setTo(hrEmail);
+                                message.setSubject("员工" + name + "身处高风险疫情地区警告");
+                                message.setText(deptName + "员工" + name + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "处于" + address + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！");
+                                emailTask.sendAsync(message);
                             }
                             else if("中风险".equals(result)){
                                 risk=2;
