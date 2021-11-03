@@ -28,37 +28,37 @@
 			<uni-list-item title="罚款记录" link to=""></uni-list-item>
 		</uni-list>
 		<view class="list-title">系统管理栏目</view>
-<!-- 		<uni-list>
+		<uni-list>
 			<uni-list-item title="员工管理" v-show="checkPermission(['ROOT','EMPLOYEE:SELECT'])" link to=""></uni-list-item>
 			<uni-list-item title="部门管理" v-show="checkPermission(['ROOT','DEPT:SELECT'])" link to=""></uni-list-item>
 			<uni-list-item title="权限管理" v-show="checkPermission(['ROOT','ROLE:SELECT'])" link to=""></uni-list-item>
-		</uni-list> -->
+		</uni-list>
 	</view>
 </template>
 
 <script>
-	// import uniList from '@/components/uni-list/uni-list.vue';
-	// import uniListItem from '@/components/uni-list-item/uni-list-item.vue';
+	import uniList from '@/components/uni-list/uni-list.vue';
+	import uniListItem from '@/components/uni-list-item/uni-list-item.vue';
 	export default {
 		components:{
-			// uniList,
-			// uniListItem
+			uniList,
+			uniListItem
 		},
 		data() {
 			return {
-				name:"小沈曰",
-				deptName:"小沈曰",
-				photo:"https://gitee.com/szlsay/wallpaper/raw/master/IMG_0191.jpg"
+				name:"",
+				deptName:"",
+				photo:""
 			}
 		},
 		onShow:function(){
-			// let that=this
-			// that.ajax(that.url.searchUserSummary,"GET",null,function(resp){
-			// 	let result=resp.data.result
-			// 	that.name=result.name
-			// 	that.deptName=result.deptName
-			// 	that.photo=result.photo
-			// })
+			let that=this
+			that.ajax(that.url.searchUserSummary,"GET",null,function(resp){
+				let result=resp.data.result
+				that.name=result.name
+				that.deptName=result.deptName
+				that.photo=result.photo
+			})
 		},
 		methods: {
 			
