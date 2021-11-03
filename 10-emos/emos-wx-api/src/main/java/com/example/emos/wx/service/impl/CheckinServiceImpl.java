@@ -1,5 +1,7 @@
 package com.example.emos.wx.service.impl;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateRange;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -25,13 +27,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
 @Service
 @Scope("prototype")
 @Slf4j
-public  class CheckinServiceImpl implements CheckinService {
+public class CheckinServiceImpl implements CheckinService {
 
     @Autowired
     private SystemConstants constants;
@@ -68,6 +71,7 @@ public  class CheckinServiceImpl implements CheckinService {
 
     @Autowired
     private EmailTask emailTask;
+
 
     @Override
     public String validCanCheckIn(int userId, String date) {
@@ -113,14 +117,6 @@ public  class CheckinServiceImpl implements CheckinService {
         Date d1=DateUtil.date();
         Date d2=DateUtil.parse(DateUtil.today()+" "+constants.attendanceTime);
         Date d3=DateUtil.parse(DateUtil.today()+" "+constants.attendanceEndTime);
-
-        System.out.println("发送邮件中");
-        SimpleMailMessage sm=new SimpleMailMessage();
-        sm.setTo(hrEmail);
-        sm.setSubject("员工" + "st" + "身处高风险疫情地区警告");
-        sm.setText("技术部" + "员工" + "st" + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "处于" + "哈哈" + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！");
-        emailTask.sendAsync(sm);
-
         int status=1;
         if(d1.compareTo(d2)<=0){
             status=1;
@@ -131,15 +127,12 @@ public  class CheckinServiceImpl implements CheckinService {
         else{
             throw new EmosException("超出考勤时间段，无法考勤");
         }
-
-        System.out.println("发送完成");
         int userId= (Integer) param.get("userId");
         String faceModel=faceModelDao.searchFaceModel(userId);
         if(faceModel==null){
             throw new EmosException("不存在人脸模型");
         }
         else{
-            System.out.println();
             String path=(String)param.get("path");
             HttpRequest request= HttpUtil.createPost(checkinUrl);
             request.form("photo", FileUtil.file(path),"targetModel",faceModel);
@@ -157,7 +150,6 @@ public  class CheckinServiceImpl implements CheckinService {
                 throw new EmosException("签到无效，非本人签到");
             }
             else if("True".equals(body)){
-                System.out.println("查询----");
                 //查询疫情风险等级
                 int risk=1;
                 String city= (String) param.get("city");
@@ -169,8 +161,8 @@ public  class CheckinServiceImpl implements CheckinService {
                     String code=cityDao.searchCode(city);
                     try{
                         String url = "http://m." + code + ".bendibao.com/news/yqdengji/?qu=" + district;
-                        Document document= Jsoup.connect(url).get();
-                        Elements elements= document.getElementsByClass("list-content");
+                        Document document=Jsoup.connect(url).get();
+                        Elements elements=document.getElementsByClass("list-content");
                         if(elements.size()>0){
                             Element element=elements.get(0);
                             String result=element.select("p:last-child").text();
@@ -215,7 +207,7 @@ public  class CheckinServiceImpl implements CheckinService {
     }
 
     @Override
-    public void createFaceModel(int userId,String path){
+    public void createFaceModel(int userId, String path) {
         HttpRequest request=HttpUtil.createPost(createFaceModelUrl);
         request.form("photo",FileUtil.file(path));
         request.form("code",code);
@@ -231,4 +223,71 @@ public  class CheckinServiceImpl implements CheckinService {
             faceModelDao.insert(entity);
         }
     }
+
+    @Override
+    public HashMap searchTodayCheckin(int userId) {
+        HashMap map=checkinDao.searchTodayCheckin(userId);
+        return map;
+    }
+
+    @Override
+    public long searchCheckinDays(int userId) {
+        long days=checkinDao.searchCheckinDays(userId);
+        return days;
+    }
+
+    @Override
+    public ArrayList<HashMap> searchWeekCheckin(HashMap param) {
+        ArrayList<HashMap> checkinList=checkinDao.searchWeekCheckin(param);
+        ArrayList holidaysList=holidaysDao.searchHolidaysInRange(param);
+        ArrayList workdayList=workdayDao.searchWorkdayInRange(param);
+        DateTime startDate=DateUtil.parseDate(param.get("startDate").toString());
+        DateTime endDate=DateUtil.parseDate(param.get("endDate").toString());
+        DateRange range=DateUtil.range(startDate,endDate,DateField.DAY_OF_MONTH);
+        ArrayList<HashMap> list=new ArrayList<>();
+        range.forEach(one->{
+            String date=one.toString("yyyy-MM-dd");
+            String type="工作日";
+            if(one.isWeekend()){
+                type="节假日";
+            }
+            if(holidaysList!=null&&holidaysList.contains(date)){
+                type="节假日";
+            }
+            else if(workdayList!=null&&workdayList.contains(date)){
+                type="工作日";
+            }
+            String status="";
+            if(type.equals("工作日")&&DateUtil.compare(one,DateUtil.date())<=0){
+                status="缺勤";
+                boolean flag=false;
+                for (HashMap<String,String> map:checkinList){
+                    if(map.containsValue(date)){
+                        status=map.get("status");
+                        flag=true;
+                        break;
+                    }
+                }
+                DateTime endTime=DateUtil.parse(DateUtil.today()+" "+constants.attendanceEndTime);
+                String today=DateUtil.today();
+                if(date.equals(today)&&DateUtil.date().isBefore(endTime)&&flag==false){
+                    status="";
+                }
+            }
+            HashMap map=new HashMap();
+            map.put("date",date);
+            map.put("status",status);
+            map.put("type",type);
+            map.put("day",one.dayOfWeekEnum().toChinese("周"));
+            list.add(map);
+        });
+        return list;
+    }
+
+    @Override
+    public ArrayList<HashMap> searchMonthCheckin(HashMap param) {
+        return this.searchWeekCheckin(param);
+    }
+
+
 }

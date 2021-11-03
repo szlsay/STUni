@@ -15,16 +15,16 @@ public interface UserService {
     public Integer login(String code);
 
     public TbUser searchById(int userId);
-//
-//    public String searchUserHiredate(int userId);
-//
-//    public HashMap searchUserSummary(int userId);
-//
-//    public ArrayList<HashMap> searchUserGroupByDept(String keyword);
-//
-//    public ArrayList<HashMap> searchMembers(List param);
-//
-//    public List<HashMap> selectUserPhotoAndName(List param);
-//
-//    public String searchMemberEmail(int id);
+
+    public String searchUserHiredate(int userId);
+
+    public HashMap searchUserSummary(int userId);
+
+    public ArrayList<HashMap> searchUserGroupByDept(String keyword);
+
+    public ArrayList<HashMap> searchMembers(List param);
+
+    public List<HashMap> selectUserPhotoAndName(List param);
+
+    public String searchMemberEmail(int id);
 }
