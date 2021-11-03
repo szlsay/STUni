@@ -35,6 +35,7 @@
 						that.ajax(that.url.login, "POST", {
 							"code": code
 						}, function(resp) {
+							console.log(resp)
 							let permission = resp.data.permission
 							console.log(permission)
 							uni.setStorageSync("permission", permission)
@@ -45,6 +46,7 @@
 						})
 					},
 					fail: function(e) {
+						console.log(e)
 						uni.showToast({
 							icon: "none",
 							title: "执行异常"

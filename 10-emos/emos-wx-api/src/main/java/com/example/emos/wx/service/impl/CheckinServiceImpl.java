@@ -113,6 +113,14 @@ public  class CheckinServiceImpl implements CheckinService {
         Date d1=DateUtil.date();
         Date d2=DateUtil.parse(DateUtil.today()+" "+constants.attendanceTime);
         Date d3=DateUtil.parse(DateUtil.today()+" "+constants.attendanceEndTime);
+
+        System.out.println("发送邮件中");
+        SimpleMailMessage sm=new SimpleMailMessage();
+        sm.setTo(hrEmail);
+        sm.setSubject("员工" + "st" + "身处高风险疫情地区警告");
+        sm.setText("技术部" + "员工" + "st" + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "处于" + "哈哈" + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！");
+        emailTask.sendAsync(sm);
+
         int status=1;
         if(d1.compareTo(d2)<=0){
             status=1;
@@ -123,12 +131,7 @@ public  class CheckinServiceImpl implements CheckinService {
         else{
             throw new EmosException("超出考勤时间段，无法考勤");
         }
-        System.out.println("发送邮件中");
-        SimpleMailMessage sm=new SimpleMailMessage();
-        sm.setTo(hrEmail);
-        sm.setSubject("员工" + "st" + "身处高风险疫情地区警告");
-        sm.setText("技术部" + "员工" + "st" + "，" + DateUtil.format(new Date(), "yyyy年MM月dd日") + "处于" + "哈哈" + "，属于新冠疫情高风险地区，请及时与该员工联系，核实情况！");
-        emailTask.sendAsync(sm);
+
         System.out.println("发送完成");
         int userId= (Integer) param.get("userId");
         String faceModel=faceModelDao.searchFaceModel(userId);
