@@ -63,45 +63,51 @@ public class UserController {
     public R login(@Valid @RequestBody LoginForm form){
         int id=userService.login(form.getCode());
         String token=jwtUtil.createToken(id);
-        System.out.println("token:" + token);
         saveCacheToken(token,id);
         Set<String> permsSet = userService.searchUserPermissions(id);
         return R.ok("登陆成功").put("token",token).put("permission",permsSet);
     }
 
-//
-//    @PostMapping("/searchUserGroupByDept")
-//    @ApiOperation("查询员工列表，按照部门分组排列")
-//    @RequiresPermissions(value = {"ROOT","EMPLOYEE:SELECT"},logical = Logical.OR)
-//    public R searchUserGroupByDept(@Valid @RequestBody SearchUserGroupByDeptForm form){
-//        ArrayList<HashMap> list=userService.searchUserGroupByDept(form.getKeyword());
-//        return R.ok().put("result",list);
-//    }
-//
-//    @PostMapping("/searchMembers")
-//    @ApiOperation("查询成员")
-//    @RequiresPermissions(value = {"ROOT", "MEETING:INSERT", "MEETING:UPDATE"},logical = Logical.OR)
-//    public R searchMembers(@Valid @RequestBody SearchMembersForm form){
-//        if(!JSONUtil.isJsonArray(form.getMembers())){
-//           throw new EmosException("members不是JSON数组");
-//        }
-//        List param=JSONUtil.parseArray(form.getMembers()).toList(Integer.class);
-//        ArrayList list=userService.searchMembers(param);
-//        return R.ok().put("result",list);
-//    }
-//
-//    @PostMapping("/selectUserPhotoAndName")
-//    @ApiOperation("查询用户姓名和头像")
-//    @RequiresPermissions(value = {"WORKFLOW:APPROVAL"})
-//    public R selectUserPhotoAndName(@Valid @RequestBody SelectUserPhotoAndNameForm form){
-//        if(!JSONUtil.isJsonArray(form.getIds())){
-//            throw new EmosException("参数不是JSON数组");
-//        }
-//        List<Integer> param=JSONUtil.parseArray(form.getIds()).toList(Integer.class);
-//        List<HashMap> list=userService.selectUserPhotoAndName(param);
-//        return R.ok().put("result",list);
-//    }
-//
+    @GetMapping("/searchUserSummary")
+    @ApiOperation("查询用户摘要信息")
+    public R searchUserSummary(@RequestHeader("token") String token){
+        int userId=jwtUtil.getUserId(token);
+        HashMap map=userService.searchUserSummary(userId);
+        return R.ok().put("result",map);
+    }
+
+    @PostMapping("/searchUserGroupByDept")
+    @ApiOperation("查询员工列表，按照部门分组排列")
+    @RequiresPermissions(value = {"ROOT","EMPLOYEE:SELECT"},logical = Logical.OR)
+    public R searchUserGroupByDept(@Valid @RequestBody SearchUserGroupByDeptForm form){
+        ArrayList<HashMap> list=userService.searchUserGroupByDept(form.getKeyword());
+        return R.ok().put("result",list);
+    }
+
+    @PostMapping("/searchMembers")
+    @ApiOperation("查询成员")
+    @RequiresPermissions(value = {"ROOT", "MEETING:INSERT", "MEETING:UPDATE"},logical = Logical.OR)
+    public R searchMembers(@Valid @RequestBody SearchMembersForm form){
+        if(!JSONUtil.isJsonArray(form.getMembers())){
+            throw new EmosException("members不是JSON数组");
+        }
+        List param=JSONUtil.parseArray(form.getMembers()).toList(Integer.class);
+        ArrayList list=userService.searchMembers(param);
+        return R.ok().put("result",list);
+    }
+
+    @PostMapping("/selectUserPhotoAndName")
+    @ApiOperation("查询用户姓名和头像")
+    @RequiresPermissions(value = {"WORKFLOW:APPROVAL"})
+    public R selectUserPhotoAndName(@Valid @RequestBody SelectUserPhotoAndNameForm form){
+        if(!JSONUtil.isJsonArray(form.getIds())){
+            throw new EmosException("参数不是JSON数组");
+        }
+        List<Integer> param=JSONUtil.parseArray(form.getIds()).toList(Integer.class);
+        List<HashMap> list=userService.selectUserPhotoAndName(param);
+        return R.ok().put("result",list);
+    }
+
 //    @GetMapping("/genUserSig")
 //    @ApiOperation("生成用户签名")
 //    public R genUserSig(@RequestHeader("token") String token){
@@ -111,7 +117,7 @@ public class UserController {
 //        String userSig=api.genUserSig(email,expire);
 //        return R.ok().put("userSig",userSig).put("email",email);
 //    }
-//
+
     private void saveCacheToken(String token,int userId){
         redisTemplate.opsForValue().set(token,userId+"",cacheExpire, TimeUnit.DAYS);
     }

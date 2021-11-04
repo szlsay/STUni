@@ -108,6 +108,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/members/members",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
