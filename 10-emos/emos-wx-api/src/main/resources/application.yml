@@ -77,10 +77,10 @@ emos:
     hr: 123456@qq.com
   image-folder: /Users/ylmac/Pictures/emos/image
   code: 123456
-#  recieveNotify: http://PC电脑的IP地址:8080/emos-wx-api/meeting/recieveNotify
-#workflow:
-#  url: http://CentOS的IP地址:9090/emos-workflow
-#
+  recieveNotify: http://192.168.7.32:8080/emos-wx-api/meeting/recieveNotify
+workflow:
+  url: http://192.168.7.32:9090/emos-workflow
+
 #trtc:
 #  appid: TRTC的APPID
 #  key: TRTC的密钥
