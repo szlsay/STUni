@@ -10,7 +10,7 @@ import com.example.emos.wx.db.pojo.MessageEntity;
 import com.example.emos.wx.db.pojo.TbUser;
 import com.example.emos.wx.exception.EmosException;
 import com.example.emos.wx.service.UserService;
-//import com.example.emos.wx.task.MessageTask;
+import com.example.emos.wx.task.MessageTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,8 +35,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TbDeptDao deptDao;
 
-//    @Autowired
-//    private MessageTask messageTask;
+    @Autowired
+    private MessageTask messageTask;
 
     private String getOpenId(String code){
         String url="https://api.weixin.qq.com/sns/jscode2session";
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
                 entity.setUuid(IdUtil.simpleUUID());
                 entity.setMsg("欢迎您注册成为超级管理员，请及时更新你的员工个人信息。");
                 entity.setSendTime(new Date());
-//                messageTask.sendAsync(id+"",entity);
+                messageTask.sendAsync(id+"",entity);
                 return id;
             }
             else{
@@ -134,10 +134,10 @@ public class UserServiceImpl implements UserService {
             long deptId=(Long)map_1.get("id");
             ArrayList members=new ArrayList();
             for(HashMap map_2:list_2){
-               long id=(Long) map_2.get("deptId");
-               if(deptId==id){
-                   members.add(map_2);
-               }
+                long id=(Long) map_2.get("deptId");
+                if(deptId==id){
+                    members.add(map_2);
+                }
             }
             map_1.put("members",members);
         }
