@@ -10,14 +10,13 @@ const app = new Vue({
 app.$mount()
 
 let baseUrl = "http://192.168.121.177:8080/emos-wx-api"
-// let baseUrl = "http://PC电脑的IP:8080/emos-wx-api"
-// let workflow="http://CentOS的IP:9090/emos-workflow"
-// Vue.prototype.code="慕课网授权字符串"
-// Vue.prototype.tencent = {
-//     trtc: {
-//         appid: "你自己的TRTC的APPID"
-//     }
-// }
+let workflow="http://192.168.121.177:9090/emos-workflow"
+Vue.prototype.code="123456"
+Vue.prototype.tencent = {
+    trtc: {
+        appid: "TRTCAPPID"
+    }
+}
 
 Vue.prototype.url = {
 	register: baseUrl + "/user/register",
@@ -40,8 +39,8 @@ Vue.prototype.url = {
 	searchMeetingById:baseUrl+"/meeting/searchMeetingById",
 	updateMeetingInfo: baseUrl + "/meeting/updateMeetingInfo",
 	deleteMeetingById:baseUrl+"/meeting/deleteMeetingById",
-	// searchUserTaskListByPage:workflow+"/workflow/searchUserTaskListByPage",
-	// approvalMeeting:workflow+"/workflow/approvalMeeting",
+	searchUserTaskListByPage:workflow+"/workflow/searchUserTaskListByPage",
+	approvalMeeting:workflow+"/workflow/approvalMeeting",
 	selectUserPhotoAndName:baseUrl+"/user/selectUserPhotoAndName",
 	genUserSig: baseUrl + "/user/genUserSig",
 	searchRoomIdByUUID: baseUrl + "/meeting/searchRoomIdByUUID",

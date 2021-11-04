@@ -3,7 +3,7 @@ package com.example.emos.wx.controller;
 import cn.hutool.json.JSONUtil;
 import com.example.emos.wx.common.util.R;
 import com.example.emos.wx.config.shiro.JwtUtil;
-//import com.example.emos.wx.config.tencent.TLSSigAPIv2;
+import com.example.emos.wx.config.tencent.TLSSigAPIv2;
 import com.example.emos.wx.controller.form.*;
 import com.example.emos.wx.exception.EmosException;
 import com.example.emos.wx.service.UserService;
@@ -39,14 +39,14 @@ public class UserController {
     @Value("${emos.jwt.cache-expire}")
     private int cacheExpire;
 
-//    @Value("${trtc.appid}")
-//    private Integer appid;
-//
-//    @Value("${trtc.key}")
-//    private String key;
-//
-//    @Value("${trtc.expire}")
-//    private Integer expire;
+    @Value("${trtc.appid}")
+    private Integer appid;
+
+    @Value("${trtc.key}")
+    private String key;
+
+    @Value("${trtc.expire}")
+    private Integer expire;
 
     @PostMapping("/register")
     @ApiOperation("注册用户")
@@ -108,15 +108,15 @@ public class UserController {
         return R.ok().put("result",list);
     }
 
-//    @GetMapping("/genUserSig")
-//    @ApiOperation("生成用户签名")
-//    public R genUserSig(@RequestHeader("token") String token){
-//        int id=jwtUtil.getUserId(token);
-//        String email=userService.searchMemberEmail(id);
-//        TLSSigAPIv2 api=new TLSSigAPIv2(appid,key);
-//        String userSig=api.genUserSig(email,expire);
-//        return R.ok().put("userSig",userSig).put("email",email);
-//    }
+    @GetMapping("/genUserSig")
+    @ApiOperation("生成用户签名")
+    public R genUserSig(@RequestHeader("token") String token){
+        int id=jwtUtil.getUserId(token);
+        String email=userService.searchMemberEmail(id);
+        TLSSigAPIv2 api=new TLSSigAPIv2(appid,key);
+        String userSig=api.genUserSig(email,expire);
+        return R.ok().put("userSig",userSig).put("email",email);
+    }
 
     private void saveCacheToken(String token,int userId){
         redisTemplate.opsForValue().set(token,userId+"",cacheExpire, TimeUnit.DAYS);

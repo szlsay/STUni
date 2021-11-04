@@ -81,10 +81,10 @@ emos:
 workflow:
   url: http://192.168.7.32:9090/emos-workflow
 
-#trtc:
-#  appid: TRTC的APPID
-#  key: TRTC的密钥
-#  expire: 86400
+trtc:
+  appid: 123456
+  key: 123456
+  expire: 86400
 wx:
   app-id: wx2efa8aa96be5279c
   app-secret: d5cc1b569e9be2f9218a2137215ed619
